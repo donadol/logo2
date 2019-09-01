@@ -1,1 +1,15 @@
-hello world
+program miprograma{
+	let x = 3
+	
+	let y
+	
+	let z = 10
+	
+	y = x
+	
+	println y
+	
+	println x
+	
+	read x
+}

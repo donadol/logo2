@@ -1,0 +1,11 @@
+program miprograma{
+var x
+
+var y = 9
+
+print y
+
+print x
+
+read x
+}

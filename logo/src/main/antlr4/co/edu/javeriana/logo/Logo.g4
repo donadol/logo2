@@ -1,8 +1,15 @@
 grammar Logo;
 
 
+@parser::header {
+	
+	import java.util.Map;
+	import java.util.HashMap;
+}
+
 @parser::members {
 
+Map<String, Object> symbolTable = new HashMap<String, Object>();
 private Turtle turtle;
 
 public LogoParser(TokenStream input, Turtle turtle) {
@@ -11,7 +18,13 @@ public LogoParser(TokenStream input, Turtle turtle) {
 }
 
 }
+
+
+
+
 program: PROGRAM ID BRACKET_OPEN sentence* BRACKET_CLOSE;
+
+
 
 move_forw: MOVE_FORW NUMBER;
 move_back: MOVE_BACK NUMBER;
@@ -19,19 +32,36 @@ rot_l: ROT_L NUMBER;
 rot_r: ROT_R NUMBER;
 set_color: SET_COLOR NUMBER COLON NUMBER COLON NUMBER COLON NUMBER;
 
-var_decl: LET ID;
-var_assign: LET? ID ASSIGN NUMBER|STRING;
+var_decl: LET ID
+	{
+		symbolTable.put($ID.text,0);
+		System.out.println("Declarando variable");
+	};
+	
+var_assign: LET? ID ASSIGN expression
+	{
+		symbolTable.put($ID.text,  $expression.value);
+		System.out.println("Asignando valor a variable" + $expression.value);
+	};
+	
 
 sentence: var_decl | var_assign | println | read;
-condition: (NOT PAR_OPEN)? ID (GT|LT|GEQ|LEQ|EQ|NEQ) (NUMBER|ID|STRING|BOOLEAN) PAR_CLOSE?;
+condition: (NOT PAR_OPEN)? ID (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
 conditional: INI_IF condition ((AND|OR) condition)* THEN sentence+ (ELSE sentence+)? END_IF;
 cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
 
-println: PRINTLN ID;
-read: READ ID;
-
+println: PRINTLN expression
+	{System.out.println("Imprimiendo por pantalla" + $expression.value);};
+read: READ expression
+	{System.out.println("Leyendo variable" + $expression.value);};
+	
 function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
-execute: ID PAR_OPEN ((NUMBER|STRING|BOOLEAN) (COLON (NUMBER|STRING|BOOLEAN)*))* PAR_CLOSE;
+execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
+
+expression returns[Object value]: 
+	NUMBER {$value  = Integer.parseInt($NUMBER.text);}
+	|STRING {$value = $STRING.text;}
+	|BOOLEAN {$value = $BOOLEAN.text;};
 
 PROGRAM: 'program';
 LET: 'let';
