@@ -38,7 +38,7 @@ var_decl: LET ID
 		System.out.println("Declarando variable");
 	};
 	
-var_assign: LET? ID ASSIGN expression
+var_assign: LET? ID ASSIGN ( expression | ID) //corregir esto
 	{
 		symbolTable.put($ID.text,  $expression.value);
 		System.out.println("Asignando valor a variable" + $expression.value);
@@ -58,20 +58,43 @@ read: READ expression
 function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
-expression returns[Object value]: 
+expression returns [Object value]: 
+	
+	 t1 = expo {$value = (int)$t1.value;} 
+	(PLUS t2 = expo {$value = (int)$value + (int)$t2.value;}
+	
+	| MINUS t2 = expo {$value = (int)$value - (int)$t2.value;})*;
+	
+	expo returns [Object value]:t1 = factor {$value = (int)$t1.value;} 
+	(EXPO t2 = factor {$value = (int)$value ^ (int)$t2.value;})*;
+		
+	factor returns [Object value]:
+	
+	t1 = term {$value = (int)$t1.value;} 
+	(MULT t2 = term {$value = (int)$value * (int)$t2.value;}
+	
+	| DIV t2 = term {$value = (int)$value / (int)$t2.value;}
+	
+	| MOD t2 = term {$value = (int)$value % (int)$t2.value;})*;
+	
+	
+	term returns [Object value]: 
 	NUMBER {$value  = Integer.parseInt($NUMBER.text);}
-	|STRING {$value = $STRING.text;}
-	|BOOLEAN {$value = $BOOLEAN.text;};
+	| STRING {$value = $STRING.text;}
+	| BOOLEAN {$value = $BOOLEAN.text;}
+	| PAR_OPEN expression PAR_CLOSE;
 
 PROGRAM: 'program';
 LET: 'let';
-PRINTLN: 'println';
+PRINTLN: 'println'; //ver porque esto no corre
 READ: 'read';
 
 PLUS: '+';
 MINUS: '-';
-MULTI: '*';
+MULT: '*';
 DIV: '/';
+MOD: '%';
+EXPO: '^';
 
 AND: '&&';
 OR: '||';
@@ -96,7 +119,7 @@ COLON: ',';
 SEMICOLON: ';';
 TWO_DOTS: ':';
 
-NUMBER: [0-9]+(.[0-9]*)?;
+NUMBER: [0-9]*; //corregir esto [0-9]+(.[0-9]*)?
 BOOLEAN: 'true'|'false';
 STRING : '"' ( '\\"' | . )*? '"' ;
 
