@@ -5,7 +5,8 @@ program miprograma{
 	
 	let z = 8.3
 	println 2 + 2 * 4
-	println ( 2 + 3) * 2
+	
+	println ( 2 + 3 )*2
 	println z 
 	y = z
 	

@@ -52,22 +52,14 @@ function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ EN
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
 expression returns [Object value]: 
+	expression  (MULT | DIV)  expression
+   | expression  (PLUS | MINUS) expression
+   | PAR_OPEN expression PAR_CLOSE
 	
-	t1 = factor {$value = (double)$t1.value;} 
-	(PLUS t2 = factor {$value = (double)$value + (double)$t2.value;}
-	| MINUS t2 = factor {$value = (double)$value - (double)$t2.value;})*;
-	
-	factor returns [Object value]:
-	t1 = term {$value = (double)$t1.value;} 
-	(MULT t2 = term {$value = (double)$value * (double)$t2.value;}
-	| DIV t2 = term {$value = (double)$value / (double)$t2.value;})*;
-	
-	term returns [Object value]: 
-	NUMBER {$value  = Double.parseDouble($NUMBER.text);}
+	| NUMBER {$value  = Double.parseDouble($NUMBER.text);}
 	| STRING {$value = $STRING.text;}
 	| BOOLEAN {$value = $BOOLEAN.text;}
-	| ID {$value = symbolTable.get($ID.text);}
-	| PAR_OPEN expression PAR_CLOSE; // arreglar
+	| ID {$value = symbolTable.get($ID.text);};
 
 PROGRAM: 'program';
 LET: 'let';
