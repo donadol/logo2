@@ -18,29 +18,28 @@ grammar Logo;
 
 
 program: sentence*;
+sentence: move_forw | move_back | rot_l | rot_r | set_color | var_decl | var_assign | println | read;
+condition: (NOT PAR_OPEN)? ID (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
+conditional: INI_IF condition ((AND|OR) condition)* THEN sentence+ (ELSE sentence+)? END_IF;
+cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
 
 move_forw: MOVE_FORW expression {
-	System.out.println("me estoy moviendo");
 	turtle.forward((float)$expression.value);
 };
 
 move_back: MOVE_BACK expression {
-	System.out.println("me estoy moviendo");
 	turtle.backwards((float)$expression.value);
 };
 
 rot_l: ROT_L expression {
-	System.out.println("me estoy moviendo");
 	turtle.left((float)$expression.value);
 };
 
 rot_r: ROT_R expression {
-	System.out.println("me estoy moviendo");
 	turtle.right((float)$expression.value);
 };
 
 set_color: SET_COLOR c1=expression COLON c2=expression COLON c3=expression COLON c4=expression{
-	System.out.println("cambio color");
 	turtle.color((float)$c1.value, (float)$c2.value, (float)$c3.value, (float)$c4.value);
 };
 
@@ -55,12 +54,6 @@ var_assign: LET? ID ASSIGN expression
 		symbolTable.put($ID.text,  $expression.value);
 		System.out.println("Asignando valor a variable " + $expression.value);
 	};
-	
-
-sentence: move_forw | move_back | rot_l | rot_r | set_color | var_decl | var_assign | println | read;
-condition: (NOT PAR_OPEN)? ID (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
-conditional: INI_IF condition ((AND|OR) condition)* THEN sentence+ (ELSE sentence+)? END_IF;
-cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
 
 println: PRINTLN expression
 	{System.out.println("Imprimiendo por pantalla " + $expression.value);};
