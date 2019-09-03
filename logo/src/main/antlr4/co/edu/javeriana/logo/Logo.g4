@@ -1,6 +1,5 @@
 grammar Logo;
 
-
 @parser::header {
 	
 	import java.util.Map;
@@ -8,7 +7,6 @@ grammar Logo;
 }
 
 @parser::members {
-
 Map<String, Object> symbolTable = new HashMap<String, Object>();
 private Turtle turtle;
 
@@ -16,15 +14,10 @@ public LogoParser(TokenStream input, Turtle turtle) {
     this(input);
     this.turtle = turtle;
 }
-
 }
 
 
-
-
 program: PROGRAM ID BRACKET_OPEN sentence* BRACKET_CLOSE;
-
-
 
 move_forw: MOVE_FORW NUMBER;
 move_back: MOVE_BACK NUMBER;
@@ -38,7 +31,7 @@ var_decl: LET ID
 		System.out.println("Declarando variable");
 	};
 	
-var_assign: LET? ID ASSIGN ( expression | ID) //corregir esto
+var_assign: LET? ID ASSIGN expression
 	{
 		symbolTable.put($ID.text,  $expression.value);
 		System.out.println("Asignando valor a variable" + $expression.value);
@@ -53,36 +46,28 @@ cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
 println: PRINTLN expression
 	{System.out.println("Imprimiendo por pantalla" + $expression.value);};
 read: READ expression
-	{System.out.println("Leyendo variable" + $expression.value);};
+	{System.out.println("Leyendo variable" + $expression.value);}; // arreglar
 	
 function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
 expression returns [Object value]: 
 	
-	 t1 = expo {$value = (int)$t1.value;} 
-	(PLUS t2 = expo {$value = (int)$value + (int)$t2.value;}
+	t1 = factor {$value = (double)$t1.value;} 
+	(PLUS t2 = factor {$value = (double)$value + (double)$t2.value;}
+	| MINUS t2 = factor {$value = (double)$value - (double)$t2.value;})*;
 	
-	| MINUS t2 = expo {$value = (int)$value - (int)$t2.value;})*;
-	
-	expo returns [Object value]:t1 = factor {$value = (int)$t1.value;} 
-	(EXPO t2 = factor {$value = (int)$value ^ (int)$t2.value;})*;
-		
 	factor returns [Object value]:
-	
-	t1 = term {$value = (int)$t1.value;} 
-	(MULT t2 = term {$value = (int)$value * (int)$t2.value;}
-	
-	| DIV t2 = term {$value = (int)$value / (int)$t2.value;}
-	
-	| MOD t2 = term {$value = (int)$value % (int)$t2.value;})*;
-	
+	t1 = term {$value = (double)$t1.value;} 
+	(MULT t2 = term {$value = (double)$value * (double)$t2.value;}
+	| DIV t2 = term {$value = (double)$value / (double)$t2.value;})*;
 	
 	term returns [Object value]: 
-	NUMBER {$value  = Integer.parseInt($NUMBER.text);}
+	NUMBER {$value  = Double.parseDouble($NUMBER.text);}
 	| STRING {$value = $STRING.text;}
 	| BOOLEAN {$value = $BOOLEAN.text;}
-	| PAR_OPEN expression PAR_CLOSE;
+	| ID {$value = symbolTable.get($ID.text);}
+	| PAR_OPEN expression PAR_CLOSE; // arreglar
 
 PROGRAM: 'program';
 LET: 'let';
@@ -93,8 +78,6 @@ PLUS: '+';
 MINUS: '-';
 MULT: '*';
 DIV: '/';
-MOD: '%';
-EXPO: '^';
 
 AND: '&&';
 OR: '||';
@@ -119,7 +102,7 @@ COLON: ',';
 SEMICOLON: ';';
 TWO_DOTS: ':';
 
-NUMBER: [0-9]*; //corregir esto [0-9]+(.[0-9]*)?
+NUMBER: [0-9]+(.[0-9]+)?;
 BOOLEAN: 'true'|'false';
 STRING : '"' ( '\\"' | . )*? '"' ;
 

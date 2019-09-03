@@ -3,14 +3,13 @@ program miprograma{
 	
 	let y
 	
-	let z = 8
+	let z = 8.3
 	
-	println 2 + 2 + 2
-	
+	println (2+3)*2
+	println z 
 	y = z
 	
 	println y
-	
 	
 	read x
 }
