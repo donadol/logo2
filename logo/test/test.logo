@@ -1,16 +1,5 @@
-program miprograma{
-	let x
-	
-	let y
-	
-	let z = 8.3
-	println 2 + 2 * 4
-	
-	println ( 2 + 3 )*2
-	println z 
-	y = z
-	
-	println y
-	
-	read x
-}
+move_forw 200
+rot_r 90
+move_forw 150
+rot_l 90
+move_back 100
