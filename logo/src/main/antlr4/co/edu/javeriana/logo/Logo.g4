@@ -17,10 +17,38 @@ grammar Logo;
 }
 
 
-program: sentence*;
-sentence: move_forw | move_back | rot_l | rot_r | set_color | var_decl | var_assign | println | read;
-condition: (NOT PAR_OPEN)? ID (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
-conditional: INI_IF condition ((AND|OR) condition)* THEN sentence+ (ELSE sentence+)? END_IF;
+program:
+					{
+						List<ASTNode> body = new ArrayList<ASTNode>();
+					}
+					(sentence {body.add($sentence.node);})*
+					{
+						for(ASTNode n : body){
+							n.execute();
+						}
+					};
+sentence returns [ASTNode node ]: move_forw | move_back | rot_l | rot_r | set_color | var_decl | var_assign | println {$node = $println.node;} | read | conditional{$node = $conditional.node;} | cicle;
+
+
+
+
+condition returns [ASTNode node ]: (NOT PAR_OPEN)? (ID|expression) (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
+conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)* 
+					{
+						List<ASTNode> body = new ArrayList<ASTNode>();
+					}
+					(s1 = sentence {Body.add($s1.node);})+
+					
+					{
+						List<ASTNode> elsebody = new ArrayList<ASTNode>();
+					}
+
+				(ELSE 
+					(s2 = sentence {elseBody.add($s2.node);})+)?
+					{
+						$node = new If($condition.node,body,elseBody);
+					}
+				END_IF;
 cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
 function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
@@ -55,39 +83,29 @@ var_assign: LET? ID ASSIGN expression{
 	System.out.println("Asignando valor a variable " + $expression.value);
 };
 
-println: PRINTLN expression{
-	System.out.println("Imprimiendo por pantalla " + $expression.value);
-};
-read: READ expression{
-	System.out.println("Leyendo variable " + $expression.value);
-};
+println returns [ASTNode node ]: PRINTLN expression
 
-/*
-expression returns [Object value]: 
-	expression  (MULT | DIV)  expression
-   | expression  (PLUS | MINUS) expression
-   | PAR_OPEN expression PAR_CLOSE
-   | MINUS? NUMBER {$value  = Double.parseDouble($NUMBER.text);}
-   | STRING {$value = $STRING.text;}
-   | BOOLEAN {$value = $BOOLEAN.text;}
-   | ID {$value = symbolTable.get($ID.text);};
-*/
-expression returns [Object value]: 
-	t1 = factor {$value = (float)$t1.value;} 
-	(PLUS t2 = factor {$value = (float)$value + (float)$t2.value;}
-	| MINUS t2 = factor {$value = (float)$value - (float)$t2.value;})*;
+	{$node = new Println(expression.node);};
+read: READ expression
+	{};
+
+
+expression returns [ASTNode node ]: 
+	t1 = factor {$node = $t1.node;} 
+	(PLUS t2 = factor {$node = new Addition($node, $t2.node);}
+	| MINUS t2 = factor {$node = new Minus($node, $t2.node);})*;
 	
-	factor returns [Object value]:
-	t1 = term {$value = (float)$t1.value;} 
-	(MULT t2 = term {$value = (float)$value * (float)$t2.value;}
-	| DIV t2 = term {$value = (float)$value / (float)$t2.value;})*;
+	factor returns [ASTNode node ]:
+	t1 = term {$node = $t1.node;} 
+	(MULT t2 = term {$node = new Multiplication($node, $t2.node);}
+	| DIV t2 = term {$node = new Divition($node, $t2.node);})*;
 	
-	term returns [Object value]: 
-	NUMBER {$value  = Float.parseFloat($NUMBER.text);}
-	| STRING {$value = $STRING.text;}
-	| BOOLEAN {$value = $BOOLEAN.text;}
-	| ID {$value = symbolTable.get($ID.text);}
-	| PAR_OPEN expression {$value = $expression.value;} PAR_CLOSE;
+	term returns [ASTNode node ]: 
+	NUMBER {$node = new Constant(Float.parseFloat($NUMBER.text));}
+	| STRING {$node = new Constant(($STRING.text));}
+	| BOOLEAN {$node = new Constant(Boolean.parseBoolean($BOOLEAN.text));}
+	| ID {$node = new Constant(($ID.text));}
+	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE;
 
 LET: 'let';
 PRINTLN: 'println';

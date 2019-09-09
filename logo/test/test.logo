@@ -1,23 +1,10 @@
-move_forw 350
-rot_r 90
-move_forw 150
-rot_l 90
-set_color 0,0,0,0
-move_forw 50
-rot_l 180
-set_color 255,255,255,255
-move_forw 100
-rot_l 180
-set_color 0,0,0,0
-move_forw 50
-set_color 255,255,255,255
-rot_r 90
-move_forw 200
-rot_r 45
-move_forw 50
-rot_r 45
-move_forw 50
-rot_r 45
-move_forw 50
-rot_r 45
-move_forw 50
+
+let x = 33
+
+if true
+	println 5 + 5
+else 
+	println 2+2 
+
+
+
