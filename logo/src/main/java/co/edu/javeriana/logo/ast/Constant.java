@@ -9,6 +9,10 @@ public class Constant implements ASTNode{
 		super();
 		this.value = value;
 	}
+	
+	public Object getValue(){
+		return value;
+	}
 
 
 	@Override
@@ -16,7 +20,6 @@ public class Constant implements ASTNode{
 		// TODO Auto-generated method stub
 		return value;
 	}
-
 	
 	
 }

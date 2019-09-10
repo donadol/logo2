@@ -4,6 +4,13 @@ grammar Logo;
 	
 	import java.util.Map;
 	import java.util.HashMap;
+	import co.edu.javeriana.logo.ast.ASTNode;
+import co.edu.javeriana.logo.ast.Addition;
+import co.edu.javeriana.logo.ast.Constant;
+import co.edu.javeriana.logo.ast.Divition;
+import co.edu.javeriana.logo.ast.Minus;
+import co.edu.javeriana.logo.ast.Multiplication;
+import co.edu.javeriana.logo.ast.Println;
 }
 
 @parser::members {
@@ -37,14 +44,14 @@ conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)*
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();
 					}
-					(s1 = sentence {Body.add($s1.node);})+
+					(s1 = sentence {body.add($s1.node);})+
 					
 					{
 						List<ASTNode> elsebody = new ArrayList<ASTNode>();
 					}
 
 				(ELSE 
-					(s2 = sentence {elseBody.add($s2.node);})+)?
+					(s2 = sentence {elsebody.add($s2.node);})+)?
 					{
 						$node = new If($condition.node,body,elseBody);
 					}
@@ -54,23 +61,23 @@ function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ EN
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
 move_forw: MOVE_FORW expression {
-	turtle.forward((float)$expression.value);
+	turtle.forward((float)((Constant)$expression.node).getValue());
 };
 
 move_back: MOVE_BACK expression {
-	turtle.backwards((float)$expression.value);
+	turtle.backwards((float)((Constant)$expression.node).getValue());
 };
 
 rot_l: ROT_L expression {
-	turtle.left((float)$expression.value);
+	turtle.left((float)((Constant)$expression.node).getValue());
 };
 
 rot_r: ROT_R expression {
-	turtle.right((float)$expression.value);
+	turtle.right((float)((Constant)$expression.node).getValue());
 };
 
 set_color: SET_COLOR c1=expression COLON c2=expression COLON c3=expression COLON c4=expression{
-	turtle.color((float)$c1.value, (float)$c2.value, (float)$c3.value, (float)$c4.value);
+	turtle.color((float)($c1.node.getValue()), (float)($c2.node.getValue()), (float)($c3.node.getValue()), (float)($c4.node.getValue()));
 };
 
 var_decl: LET ID{
@@ -79,8 +86,8 @@ var_decl: LET ID{
 };
 	
 var_assign: LET? ID ASSIGN expression{
-	symbolTable.put($ID.text,  $expression.value);
-	System.out.println("Asignando valor a variable " + $expression.value);
+	symbolTable.put($ID.text,  $expression.node.getValue());
+	System.out.println("Asignando valor a variable " + $expression.node.getValue());
 };
 
 println returns [ASTNode node ]: PRINTLN expression
