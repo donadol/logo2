@@ -15,7 +15,7 @@ public class Addition implements ASTNode {
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable) {
-		return (float)operand1.execute(symbolTable) + (float)operand2.execute(symbolTable);
+		return (float)((float)operand1.execute(symbolTable) + (float)operand2.execute(symbolTable));
 	}
 
 }

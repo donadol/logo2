@@ -1,7 +1,7 @@
 let x
-x = 2
-let a = 100
-println 5 + x
+x = 2 + 50
+println x + 1
+let a = "hola"
 set_color 255,250,100,50
 rot_l 30
 move_forw 900
@@ -11,7 +11,3 @@ move_forw 300
 rot_r 30
 move_forw 300
 set_color 255,250,100,50
-if true
-	println 5 + 5
-else 
-	println 2+2 

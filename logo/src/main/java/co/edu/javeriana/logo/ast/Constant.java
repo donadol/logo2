@@ -11,11 +11,6 @@ public class Constant implements ASTNode{
 		super();
 		this.value = value;
 	}
-	
-	public Object getValue(){
-		return value;
-	}
-
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable) {
