@@ -1,5 +1,7 @@
 package co.edu.javeriana.logo.ast;
 
+import java.util.Map;
+
 public class Println implements ASTNode{
 	
 	private ASTNode data;
@@ -8,9 +10,9 @@ public class Println implements ASTNode{
 		super();
 		this.data = data;
 	}
-	
-	public Object execute(){
-		System.out.println(data.execute());
+	@Override
+	public Object execute(Map<String, Object> symbolTable){
+		System.out.println(data.execute(symbolTable));
 		return null;
 	}
 

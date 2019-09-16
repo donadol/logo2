@@ -1,5 +1,7 @@
 package co.edu.javeriana.logo.ast;
 
+import java.util.Map;
+
 public class Minus implements ASTNode {
 
 	private ASTNode operand1;
@@ -12,8 +14,8 @@ public class Minus implements ASTNode {
 	}
 
 	@Override
-	public Object execute() {
-		return (float)operand1.execute() - (float)operand2.execute();
+	public Object execute(Map<String, Object> symbolTable) {
+		return (float)operand1.execute(symbolTable) - (float)operand2.execute(symbolTable);
 	}
 
 }

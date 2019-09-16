@@ -4,13 +4,8 @@ grammar Logo;
 	
 	import java.util.Map;
 	import java.util.HashMap;
-	import co.edu.javeriana.logo.ast.ASTNode;
-import co.edu.javeriana.logo.ast.Addition;
-import co.edu.javeriana.logo.ast.Constant;
-import co.edu.javeriana.logo.ast.Divition;
-import co.edu.javeriana.logo.ast.Minus;
-import co.edu.javeriana.logo.ast.Multiplication;
-import co.edu.javeriana.logo.ast.Println;
+	import co.edu.javeriana.logo.ast.*;
+
 }
 
 @parser::members {
@@ -27,14 +22,15 @@ import co.edu.javeriana.logo.ast.Println;
 program:
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();
+						Map <String, Object> symbolTable = new HashMap<String, Object>();
 					}
 					(sentence {body.add($sentence.node);})*
 					{
 						for(ASTNode n : body){
-							n.execute();
+							n.execute(symbolTable);
 						}
 					};
-sentence returns [ASTNode node ]: move_forw | move_back | rot_l | rot_r | set_color | var_decl | var_assign | println {$node = $println.node;} | read | conditional{$node = $conditional.node;} | cicle;
+sentence returns [ASTNode node ]: move_forw {$node = $move_forw.node;}| move_back {$node = $move_back.node;}| rot_l {$node = $rot_l.node;}| rot_r {$node = $rot_r.node;}| set_color {$node = $set_color.node;}| var_decl {$node = $var_decl.node;}  | var_assign {$node = $var_assign.node;}  | println {$node = $println.node;} | read | conditional{$node = $conditional.node;} | cicle;
 
 
 
@@ -53,46 +49,44 @@ conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)*
 				(ELSE 
 					(s2 = sentence {elsebody.add($s2.node);})+)?
 					{
-						$node = new If($condition.node,body,elseBody);
+						$node = new If($condition.node,body,elsebody);
 					}
 				END_IF;
 cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
 function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
-move_forw: MOVE_FORW expression {
-	turtle.forward((float)((Constant)$expression.node).getValue());
+move_forw returns [ASTNode node]: MOVE_FORW expression {
+	$node = new MoveForw($expression.node, turtle);
 };
 
-move_back: MOVE_BACK expression {
-	turtle.backwards((float)((Constant)$expression.node).getValue());
+move_back returns [ASTNode node]: MOVE_BACK expression {
+	$node = new MoveBack($expression.node, turtle);
 };
 
-rot_l: ROT_L expression {
-	turtle.left((float)((Constant)$expression.node).getValue());
+rot_l returns [ASTNode node]: ROT_L expression {
+	$node = new RotL($expression.node, turtle);
 };
 
-rot_r: ROT_R expression {
-	turtle.right((float)((Constant)$expression.node).getValue());
+rot_r returns [ASTNode node]: ROT_R expression {
+	$node = new RotR($expression.node, turtle);
 };
 
-set_color: SET_COLOR c1=expression COLON c2=expression COLON c3=expression COLON c4=expression{
-	turtle.color((float)($c1.node.getValue()), (float)($c2.node.getValue()), (float)($c3.node.getValue()), (float)($c4.node.getValue()));
+set_color returns [ASTNode node]: SET_COLOR c1=expression COLON c2=expression COLON c3=expression COLON c4=expression{
+	$node = new setColor($c1.node,$c2.node,$c3.node,$c4.node, turtle);
 };
 
-var_decl: LET ID{
-	symbolTable.put($ID.text,0);
-	System.out.println("Declarando variable");
+var_decl returns  [ASTNode node ]: LET ID{
+	$node = new VarDecl($ID.text);
 };
 	
-var_assign: LET? ID ASSIGN expression{
-	symbolTable.put($ID.text,  $expression.node.getValue());
-	System.out.println("Asignando valor a variable " + $expression.node.getValue());
+var_assign returns  [ASTNode node ]: LET? ID ASSIGN expression{
+	$node = new VarAssign($ID.text, $expression.node);
 };
 
 println returns [ASTNode node ]: PRINTLN expression
 
-	{$node = new Println(expression.node);};
+	{$node = new Println($expression.node);};
 read: READ expression
 	{};
 
@@ -111,7 +105,7 @@ expression returns [ASTNode node ]:
 	NUMBER {$node = new Constant(Float.parseFloat($NUMBER.text));}
 	| STRING {$node = new Constant(($STRING.text));}
 	| BOOLEAN {$node = new Constant(Boolean.parseBoolean($BOOLEAN.text));}
-	| ID {$node = new Constant(($ID.text));}
+	| ID {$node = new VarRef($ID.text);}
 	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE;
 
 LET: 'let';
