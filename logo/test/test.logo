@@ -1,13 +1,25 @@
-let x
-x = 2 + 50
-println x + 1
-let a = "hola"
-set_color 255,250,100,50
-rot_l 30
-move_forw 900
-move_back 400
-rot_l 30
-move_forw 300
-rot_r 30
-move_forw 300
-set_color 255,250,100,50
+move_forw 200
+rot_r 90
+move_forw 100
+rot_l 90
+set_color 0,0,0,0
+move_forw 50
+rot_l 180
+set_color 255,255,255,255
+move_forw 100
+rot_l 180
+set_color 0,0,0,0
+move_forw 50
+set_color 255,255,255,255
+rot_r 90
+move_forw 200
+rot_r 45
+move_forw 50
+rot_r 45
+move_forw 50
+rot_r 45
+move_forw 50
+rot_r 45
+move_forw 50
+rot_r 45
+move_back 50
