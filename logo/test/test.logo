@@ -1,8 +1,16 @@
 let a = true
 println a
 
-if a == true
-	println "hola"
+if a == true then
+	let y = 3
+	println y
 else
 	println "chao"
+end_if
+println y
+println 3+5
+
+let x=17
+if x == 3 + 2 * (8-1) then
+    println "hola"
 end_if
