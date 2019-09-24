@@ -1,15 +1,14 @@
 package co.edu.javeriana.logo.ast;
 
 import java.util.List;
-import java.util.Map;
+
+import co.edu.javeriana.logo.scope.Context;
 
 public class If implements ASTNode{
 
 	private ASTNode condition;
 	private List<ASTNode> body;
 	private List<ASTNode> elsebody;
-	
-	
 	
 	public If(ASTNode condition, List<ASTNode> body, List<ASTNode> elsebody) {
 		super();
@@ -18,17 +17,20 @@ public class If implements ASTNode{
 		this.elsebody = elsebody;
 	}
 
-
-
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
+		Context local_context = new Context(symbolTable);
 		if((boolean) condition.execute(symbolTable)){
 			for(ASTNode n: body ){
-				n.execute(symbolTable);
+				Object task = n.execute(local_context);
+				if(task != null)
+					return task;
 			}
 		}else{
 			for(ASTNode n: elsebody ){
-				n.execute(symbolTable);
+				Object task = n.execute(local_context);
+				if(task != null)
+					return task;
 			}			
 		}
 		return null;
