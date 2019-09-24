@@ -22,7 +22,7 @@ public class If implements ASTNode{
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable) {
-		if((boolean)condition.execute(symbolTable)){
+		if((boolean) condition.execute(symbolTable)){
 			for(ASTNode n: body ){
 				n.execute(symbolTable);
 			}
