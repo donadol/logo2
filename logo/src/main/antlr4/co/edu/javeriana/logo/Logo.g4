@@ -35,8 +35,10 @@ sentence returns [ASTNode node ]: move_forw {$node = $move_forw.node;}| move_bac
 
 
 
-condition returns [ASTNode node ]: (NOT PAR_OPEN)? (ID|expression) (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
-conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)* 
+condition returns [ASTNode node ]: (NOT PAR_OPEN)? (ID|expression{$node = $expression.node;}
+) (GT|LT|GEQ|LEQ|EQ|NEQ) (ID|t2 = expression{$node = $t2.node;}) PAR_CLOSE?;
+
+conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)* THEN
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();
 					}
