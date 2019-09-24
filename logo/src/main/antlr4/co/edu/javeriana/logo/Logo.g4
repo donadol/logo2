@@ -5,6 +5,7 @@ grammar Logo;
 	import java.util.Map;
 	import java.util.HashMap;
 	import co.edu.javeriana.logo.ast.*;
+	import co.edu.javeriana.logo.scope.Context;
 
 }
 
@@ -21,7 +22,7 @@ grammar Logo;
 
 program:{
 			List<ASTNode> body = new ArrayList<ASTNode>();
-			Map <String, Object> symbolTable = new HashMap<String, Object>();
+			Context symbolTable = new Context();
 		}
 		(sentence {body.add($sentence.node);})*
 		{
