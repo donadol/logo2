@@ -2,6 +2,8 @@ package co.edu.javeriana.logo.ast;
 
 import java.util.Map;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class VarAssign implements ASTNode {
 
 	private String name;
@@ -16,7 +18,7 @@ public class VarAssign implements ASTNode {
 
 
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
 		symbolTable.put(name, expression.execute(symbolTable));
 		return null;
 	}

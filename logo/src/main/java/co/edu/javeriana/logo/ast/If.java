@@ -3,6 +3,8 @@ package co.edu.javeriana.logo.ast;
 import java.util.List;
 import java.util.Map;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class If implements ASTNode{
 
 	private ASTNode condition;
@@ -21,7 +23,7 @@ public class If implements ASTNode{
 
 
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
 		if((boolean) condition.execute(symbolTable)){
 			for(ASTNode n: body ){
 				n.execute(symbolTable);
