@@ -59,7 +59,7 @@ conditional returns [ASTNode node ]: INI_IF expression THEN
 					}
 				END_IF;
 cicle: INI_WHILE expression DO sentence+ END_WHILE;
-function returns [ASTNode node]: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
+function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
 move_forw returns [ASTNode node]: MOVE_FORW expression {
@@ -99,7 +99,8 @@ read: READ expression
 expression returns [ASTNode node]:
 	arithm_exp {$node = $arithm_exp.node;}
 	| boolean_exp {$node = $boolean_exp.node;}
-	| function {$node = $function.node;};
+	//| function {$node = $function.node;}
+	;
 	
 arithm_exp returns [ASTNode node]:
 	factor {$node = $factor.node;}
@@ -142,7 +143,8 @@ term returns [ASTNode node]:
 	| STRING {$node = new Constant(String.valueOf($STRING.text).replace("\"","") );}
 	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE
 	| ID {$node = new VarRef($ID.text);}
-	| function {$node = $function.node;};
+	//| function {$node = $function.node;}
+;
 
 LET: 'let';
 PRINTLN: 'println';
