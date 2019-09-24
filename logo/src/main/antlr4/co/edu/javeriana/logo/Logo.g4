@@ -97,15 +97,15 @@ read: READ expression
 	{};
 
 expression returns [ASTNode node]:
-	arithm_exp {$node = $arithm_exp.node;}
-	| boolean_exp {$node = $boolean_exp.node;}
+	arithmic_expression {$node = $arithmic_expression.node;}
+	| boolean_expression {$node = $boolean_expression.node;}
 	//| function {$node = $function.node;}
 	;
 	
-arithm_exp returns [ASTNode node]:
+arithmic_expression returns [ASTNode node]:
 	factor {$node = $factor.node;}
-	| t1=arithm_exp PLUS t2=arithm_exp {$node=new Addition($t1.node,$t2.node);}
-	| t3=arithm_exp MINUS t4=arithm_exp {$node= new Minus($t3.node,$t4.node);};
+	| t1=arithmic_expression PLUS t2=arithmic_expression {$node=new Addition($t1.node,$t2.node);}
+	| t3=arithmic_expression MINUS t4=arithmic_expression {$node= new Minus($t3.node,$t4.node);};
 
 factor returns [ASTNode node]:
 	additive_inverse {$node=$additive_inverse.node;}
@@ -116,9 +116,9 @@ additive_inverse returns [ASTNode node]:
 	term {$node=$term.node;}
 	| MINUS term {$node=new AdditiveInverse($term.node);};
 
-boolean_exp returns [ASTNode node]:
+boolean_expression returns [ASTNode node]:
 	and {$node = $and.node;}
-	| t1=boolean_exp OR t2=boolean_exp {$node = new Or($t1.node,$t2.node);};
+	| t1=boolean_expression OR t2=boolean_expression {$node = new Or($t1.node,$t2.node);};
 
 and returns [ASTNode node]:
 	not {$node=$not.node;}
@@ -129,7 +129,7 @@ not returns [ASTNode node]:
 	|NOT comparation {$node=new Not($comparation.node);};
 
 comparation returns [ASTNode node]:
-	arithm_exp {$node = $arithm_exp.node;}
+	arithmic_expression {$node = $arithmic_expression.node;}
 	| t1=comparation GT t2=comparation {$node = new Greater($t1.node,$t2.node);}
 	| t1=comparation LT t2=comparation {$node = new Less($t1.node,$t2.node);}
 	| t1=comparation GEQ t2=comparation {$node = new GreaterEq($t1.node,$t2.node);}
