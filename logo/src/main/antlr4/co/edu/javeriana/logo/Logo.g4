@@ -132,8 +132,8 @@ comparation returns [ASTNode node]:
 	arithmic_expression {$node = $arithmic_expression.node;}
 	| t1=comparation GT t2=comparation {$node = new Greater($t1.node,$t2.node);}
 	| t1=comparation LT t2=comparation {$node = new Less($t1.node,$t2.node);}
-	| t1=comparation GEQ t2=comparation {$node = new GreaterEq($t1.node,$t2.node);}
-	| t1=comparation LEQ t2=comparation {$node = new LessEq($t1.node,$t2.node);}
+	| t1=comparation GEQ t2=comparation {$node = new GreaterEqual($t1.node,$t2.node);}
+	| t1=comparation LEQ t2=comparation {$node = new LessEqual($t1.node,$t2.node);}
 	| t1=comparation EQ t2=comparation {$node = new Equal($t1.node,$t2.node);}
 	| t1=comparation NEQ t2=comparation {$node = new Different($t1.node,$t2.node);};
 
