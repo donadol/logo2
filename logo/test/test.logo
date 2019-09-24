@@ -1,25 +1,8 @@
-move_forw 200
-rot_r 90
-move_forw 100
-rot_l 90
-set_color 0,0,0,0
-move_forw 50
-rot_l 180
-set_color 255,255,255,255
-move_forw 100
-rot_l 180
-set_color 0,0,0,0
-move_forw 50
-set_color 255,255,255,255
-rot_r 90
-move_forw 200
-rot_r 45
-move_forw 50
-rot_r 45
-move_forw 50
-rot_r 45
-move_forw 50
-rot_r 45
-move_forw 50
-rot_r 45
-move_back 50
+let a = true
+println a
+
+if a == true
+	println "hola"
+else
+	println "chao"
+end_if

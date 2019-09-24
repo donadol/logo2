@@ -19,23 +19,22 @@ grammar Logo;
 }
 
 
-program:
-					{
-						List<ASTNode> body = new ArrayList<ASTNode>();
-						Map <String, Object> symbolTable = new HashMap<String, Object>();
-					}
-					(sentence {body.add($sentence.node);})*
-					{
-						for(ASTNode n : body){
-							n.execute(symbolTable);
-						}
-					};
+program:{
+			List<ASTNode> body = new ArrayList<ASTNode>();
+			Map <String, Object> symbolTable = new HashMap<String, Object>();
+		}
+		(sentence {body.add($sentence.node);})*
+		{
+			for(ASTNode n : body){
+				n.execute(symbolTable);
+			}
+		};
 sentence returns [ASTNode node ]: move_forw {$node = $move_forw.node;}| move_back {$node = $move_back.node;}| rot_l {$node = $rot_l.node;}| rot_r {$node = $rot_r.node;}| set_color {$node = $set_color.node;}| var_decl {$node = $var_decl.node;}  | var_assign {$node = $var_assign.node;}  | println {$node = $println.node;} | read | conditional{$node = $conditional.node;} | cicle;
 
 
 
 
-condition returns [ASTNode node ]: (NOT PAR_OPEN)? (ID|expression) (GT|LT|GEQ|LEQ|EQ|NEQ) (expression) PAR_CLOSE?;
+condition returns [ASTNode node ]: (NOT PAR_OPEN)? (ID|expression{$node=$expression.node;}) (GT|LT|GEQ|LEQ|EQ|NEQ) (ID| t2=expression{$node=$t2.node;}) PAR_CLOSE?;
 conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)* 
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();
@@ -90,23 +89,56 @@ println returns [ASTNode node ]: PRINTLN expression
 read: READ expression
 	{};
 
+expression returns [ASTNode node]:
+	arithm_exp {$node = $arithm_exp.node;}
+	| boolean_exp {$node = $boolean_exp.node;}
+	| function {$node = $function.node;};
+	
+arithm_exp returns [ASTNode node]:
+	factor {$node = $factor.node;}
+	| t1=arithm_exp PLUS t2=arithm_exp {$node=new Addition($t1.node,$t2.node);}
+	| t3=arithm_exp MINUS t4=arithm_exp {$node= new Minus($t3.node,$t4.node);};
 
-expression returns [ASTNode node ]: 
-	t1 = factor {$node = $t1.node;} 
-	(PLUS t2 = factor {$node = new Addition($node, $t2.node);}
-	| MINUS t2 = factor {$node = new Minus($node, $t2.node);})*;
-	
-	factor returns [ASTNode node ]:
-	t1 = term {$node = $t1.node;} 
-	(MULT t2 = term {$node = new Multiplication($node, $t2.node);}
-	| DIV t2 = term {$node = new Divition($node, $t2.node);})*;
-	
-	term returns [ASTNode node ]: 
-	NUMBER {$node = new Constant(Float.parseFloat($NUMBER.text));}
-	| STRING {$node = new Constant(($STRING.text));}
+
+factor returns [ASTNode node]:
+	additive_inverse {$node=$additive_inverse.node;}
+	| t1=factor MULT t2=factor {$node=new Multiplication($t1.node,$t2.node);}
+	| t3=factor DIV t4=factor {$node=new Division($t3.node,$t4.node);};
+
+additive_inverse returns [ASTNode node]:
+	term {$node=$term.node;}
+	| MINUS term {$node=new AdditiveInverse($term.node);};
+
+boolean_exp returns [ASTNode node]:
+	and {$node = $and.node;}
+	| t1=boolean_exp OR t2=boolean_exp {$node = new Or($t1.node,$t2.node);};
+
+and returns [ASTNode node]:
+	not {$node=$not.node;}
+	| t1=and AND t2=and {$node=new And($t1.node,$t2.node);};
+
+not returns [ASTNode node]:
+	comparation {$node=$comparation.node;}
+	|NOT comparation {$node=new Not($comparation.node);};
+
+comparation returns [ASTNode node]:
+	arithm_exp {$node = $arithm_exp.node;}
+	| t1=comparation GT t2=comparation {$node = new Greater($t1.node,$t2.node);}
+	| t1=comparation LT t2=comparation {$node = new Less($t1.node,$t2.node);}
+	| t1=comparation GEQ t2=comparation {$node = new GreaterEq($t1.node,$t2.node);}
+	| t1=comparation LEQ t2=comparation {$node = new LessEq($t1.node,$t2.node);}
+	| t1=comparation EQ t2=comparation {$node = new Equal($t1.node,$t2.node);}
+	| t1=comparation NEQ t2=comparation {$node = new Different($t1.node,$t2.node);}
+;
+
+term returns [ASTNode node]:
+	NUMBER {$node = new Constant(Double.parseDouble($NUMBER.text));}
 	| BOOLEAN {$node = new Constant(Boolean.parseBoolean($BOOLEAN.text));}
+	| STRING {$node = new Constant(String.valueOf($STRING.text).replace("\"","") );}
+	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE
 	| ID {$node = new VarRef($ID.text);}
-	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE;
+	| function {$node = $function.node;}
+;
 
 LET: 'let';
 PRINTLN: 'println';
