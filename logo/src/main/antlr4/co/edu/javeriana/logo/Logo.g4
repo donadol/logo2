@@ -139,7 +139,7 @@ comparation returns [ASTNode node]:
 	| t1=comparation NEQ t2=comparation {$node = new Different($t1.node,$t2.node);};
 
 term returns [ASTNode node]:
-	NUMBER {$node = new Constant(Double.parseDouble($NUMBER.text));}
+	NUMBER {$node = new Constant(Float.parseFloat($NUMBER.text));}
 	| BOOLEAN {$node = new Constant(Boolean.parseBoolean($BOOLEAN.text));}
 	| STRING {$node = new Constant(String.valueOf($STRING.text).replace("\"","") );}
 	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE
