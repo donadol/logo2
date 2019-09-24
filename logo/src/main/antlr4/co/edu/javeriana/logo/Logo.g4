@@ -29,15 +29,20 @@ program:{
 				n.execute(symbolTable);
 			}
 		};
-sentence returns [ASTNode node ]: move_forw {$node = $move_forw.node;}| move_back {$node = $move_back.node;}| rot_l {$node = $rot_l.node;}| rot_r {$node = $rot_r.node;}| set_color {$node = $set_color.node;}| var_decl {$node = $var_decl.node;}  | var_assign {$node = $var_assign.node;}  | println {$node = $println.node;} | read | conditional{$node = $conditional.node;} | cicle;
+sentence returns [ASTNode node ]: 
+				move_forw {$node = $move_forw.node;}
+				| move_back {$node = $move_back.node;}
+				| rot_l {$node = $rot_l.node;}
+				| rot_r {$node = $rot_r.node;}
+				| set_color {$node = $set_color.node;}
+				| var_decl {$node = $var_decl.node;}
+				| var_assign {$node = $var_assign.node;}
+				| println {$node = $println.node;}
+				| read
+				| conditional{$node = $conditional.node;}
+				| cicle;
 
-
-
-
-condition returns [ASTNode node ]: (NOT PAR_OPEN)? (ID|expression{$node = $expression.node;}
-) (GT|LT|GEQ|LEQ|EQ|NEQ) (ID|t2 = expression{$node = $t2.node;}) PAR_CLOSE?;
-
-conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)* THEN
+conditional returns [ASTNode node ]: INI_IF expression THEN
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();
 					}
@@ -50,11 +55,11 @@ conditional returns [ASTNode node ]: INI_IF condition ((AND|OR) condition)* THEN
 				(ELSE 
 					(s2 = sentence {elsebody.add($s2.node);})+)?
 					{
-						$node = new If($condition.node,body,elsebody);
+						$node = new If($expression.node,body,elsebody);
 					}
 				END_IF;
-cicle: INI_WHILE condition ((AND|OR) condition)* DO sentence+ END_WHILE;
-function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
+cicle: INI_WHILE expression DO sentence+ END_WHILE;
+function returns [ASTNode node]: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
 move_forw returns [ASTNode node]: MOVE_FORW expression {
@@ -101,11 +106,10 @@ arithm_exp returns [ASTNode node]:
 	| t1=arithm_exp PLUS t2=arithm_exp {$node=new Addition($t1.node,$t2.node);}
 	| t3=arithm_exp MINUS t4=arithm_exp {$node= new Minus($t3.node,$t4.node);};
 
-
 factor returns [ASTNode node]:
 	additive_inverse {$node=$additive_inverse.node;}
 	| t1=factor MULT t2=factor {$node=new Multiplication($t1.node,$t2.node);}
-	| t3=factor DIV t4=factor {$node=new Division($t3.node,$t4.node);};
+	| t3=factor DIV t4=factor {$node=new Divition($t3.node,$t4.node);};
 
 additive_inverse returns [ASTNode node]:
 	term {$node=$term.node;}
@@ -130,8 +134,7 @@ comparation returns [ASTNode node]:
 	| t1=comparation GEQ t2=comparation {$node = new GreaterEq($t1.node,$t2.node);}
 	| t1=comparation LEQ t2=comparation {$node = new LessEq($t1.node,$t2.node);}
 	| t1=comparation EQ t2=comparation {$node = new Equal($t1.node,$t2.node);}
-	| t1=comparation NEQ t2=comparation {$node = new Different($t1.node,$t2.node);}
-;
+	| t1=comparation NEQ t2=comparation {$node = new Different($t1.node,$t2.node);};
 
 term returns [ASTNode node]:
 	NUMBER {$node = new Constant(Double.parseDouble($NUMBER.text));}
@@ -139,8 +142,7 @@ term returns [ASTNode node]:
 	| STRING {$node = new Constant(String.valueOf($STRING.text).replace("\"","") );}
 	| PAR_OPEN expression {$node = $expression.node;} PAR_CLOSE
 	| ID {$node = new VarRef($ID.text);}
-	| function {$node = $function.node;}
-;
+	| function {$node = $function.node;};
 
 LET: 'let';
 PRINTLN: 'println';
