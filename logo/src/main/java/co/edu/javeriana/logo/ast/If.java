@@ -4,6 +4,8 @@ import java.util.List;
 
 import co.edu.javeriana.logo.scope.Context;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class If implements ASTNode{
 
 	private ASTNode condition;

@@ -2,6 +2,8 @@ package co.edu.javeriana.logo.ast;
 
 import java.util.Map;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class Multiplication implements ASTNode {
 
 	private ASTNode operand1;
@@ -14,7 +16,7 @@ public class Multiplication implements ASTNode {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
 		return (float)operand1.execute(symbolTable) * (float)operand2.execute(symbolTable);
 	}
 

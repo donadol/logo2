@@ -2,6 +2,8 @@ package co.edu.javeriana.logo.ast;
 
 import java.util.Map;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class Println implements ASTNode{
 	
 	private ASTNode data;
@@ -11,7 +13,7 @@ public class Println implements ASTNode{
 		this.data = data;
 	}
 	@Override
-	public Object execute(Map<String, Object> symbolTable){
+	public Object execute(Context symbolTable){
 		System.out.println(data.execute(symbolTable));
 		return null;
 	}

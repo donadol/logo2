@@ -3,6 +3,7 @@ package co.edu.javeriana.logo.ast;
 import java.util.Map;
 
 import co.edu.javeriana.logo.Turtle;
+import co.edu.javeriana.logo.scope.Context;
 
 public class MoveForw implements ASTNode{
 	
@@ -14,7 +15,7 @@ public class MoveForw implements ASTNode{
 		this.turtle =turtle;
 	}
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
 		turtle.forward((float)operand1.execute(symbolTable));
 		return null;
 	}

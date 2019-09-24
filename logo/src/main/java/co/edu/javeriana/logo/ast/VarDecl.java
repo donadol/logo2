@@ -2,6 +2,8 @@ package co.edu.javeriana.logo.ast;
 
 import java.util.Map;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class VarDecl implements ASTNode {
 
 	private String name;
@@ -14,7 +16,7 @@ public class VarDecl implements ASTNode {
 
 
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
 		symbolTable.put(name, new Object());
 		return null;
 	}

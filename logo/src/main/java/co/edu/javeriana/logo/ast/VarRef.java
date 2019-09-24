@@ -2,6 +2,8 @@ package co.edu.javeriana.logo.ast;
 
 import java.util.Map;
 
+import co.edu.javeriana.logo.scope.Context;
+
 public class VarRef implements ASTNode {
 
 	private String name;
@@ -12,7 +14,7 @@ public class VarRef implements ASTNode {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> symbolTable) {
+	public Object execute(Context symbolTable) {
 		
 		return symbolTable.get(name);
 	}
