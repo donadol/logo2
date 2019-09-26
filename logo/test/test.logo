@@ -14,3 +14,11 @@ let x=17
 if x == 3 + 2 * (8-1) then
     println "hola"
 end_if
+
+
+let b = 0
+
+while b <> 5 do
+	println b
+	b = b + 1
+end_while

@@ -41,7 +41,7 @@ sentence returns [ASTNode node ]:
 				| println {$node = $println.node;}
 				| read
 				| conditional{$node = $conditional.node;}
-				| cicle;
+				| cicle {$node = $cicle.node;};
 
 conditional returns [ASTNode node ]: INI_IF expression THEN
 					{
@@ -59,7 +59,17 @@ conditional returns [ASTNode node ]: INI_IF expression THEN
 						$node = new If($expression.node,body,elsebody);
 					}
 				END_IF;
-cicle: INI_WHILE expression DO sentence+ END_WHILE;
+				
+				
+cicle returns [ASTNode node ]: INI_WHILE expression DO 
+					{
+						List<ASTNode> body = new ArrayList<ASTNode>();	
+					}
+					(f1 = sentence {body.add($f1.node);})+					
+					{
+						$node = new Cicle($expression.node,body);
+						
+					}END_WHILE;
 function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
 execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
