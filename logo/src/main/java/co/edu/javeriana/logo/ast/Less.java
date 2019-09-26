@@ -17,7 +17,7 @@ public class Less implements ASTNode {
 	@Override
 	public Object execute(Context symbolTable) {
 		// TODO Auto-generated method stub
-		return (Float)operand1.execute(symbolTable) < (Float)operand1.execute(symbolTable);
+		return (Float)operand1.execute(symbolTable) < (Float)operand2.execute(symbolTable);
 	}
 
 }

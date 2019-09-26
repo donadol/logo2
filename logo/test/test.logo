@@ -20,5 +20,9 @@ let b = 0
 
 while b <> 5 do
 	println b
+	let y = "pop"
 	b = b + 1
 end_while
+
+println y
+
