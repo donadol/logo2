@@ -93,11 +93,11 @@ set_color returns [ASTNode node]: SET_COLOR c1=expression COLON c2=expression CO
 	$node = new setColor($c1.node,$c2.node,$c3.node,$c4.node, turtle);
 };
 
-var_decl returns  [ASTNode node ]: LET ID{
-	$node = new VarDecl($ID.text);
+var_decl returns  [ASTNode node ]: LET ID (ASSIGN expression)?{
+	$node = new VarDecl($ID.text, $expression.node);
 };
 	
-var_assign returns  [ASTNode node ]: LET? ID ASSIGN expression{
+var_assign returns  [ASTNode node ]: ID ASSIGN expression{
 	$node = new VarAssign($ID.text, $expression.node);
 };
 
