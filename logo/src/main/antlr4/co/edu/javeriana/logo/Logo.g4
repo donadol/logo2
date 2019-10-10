@@ -119,25 +119,19 @@ arithmic_expression returns [ASTNode node]:
 	| t3=arithmic_expression MINUS t4=arithmic_expression {$node= new Minus($t3.node,$t4.node);};
 
 factor returns [ASTNode node]:
-	additive_inverse {$node=$additive_inverse.node;}
+	term {$node=$term.node;}
+	| additive_inverse {$node=$additive_inverse.node;}
 	| t1=factor MULT t2=factor {$node=new Multiplication($t1.node,$t2.node);}
 	| t3=factor DIV t4=factor {$node=new Divition($t3.node,$t4.node);};
 
 additive_inverse returns [ASTNode node]:
-	term {$node=$term.node;}
-	| MINUS term {$node=new AdditiveInverse($term.node);};
+	MINUS term {$node=new AdditiveInverse($term.node);};
 
 boolean_expression returns [ASTNode node]:
-	and {$node = $and.node;}
-	| t1=boolean_expression OR t2=boolean_expression {$node = new Or($t1.node,$t2.node);};
-
-and returns [ASTNode node]:
-	not {$node=$not.node;}
-	| t1=and AND t2=and {$node=new And($t1.node,$t2.node);};
-
-not returns [ASTNode node]:
 	comparation {$node=$comparation.node;}
-	|NOT comparation {$node=new Not($comparation.node);};
+	| t1=boolean_expression AND t2=boolean_expression {$node=new And($t1.node,$t2.node);}
+	| t1=boolean_expression OR t2=boolean_expression {$node = new Or($t1.node,$t2.node);}
+	| NOT boolean_expression {$node=new Not($comparation.node);};
 
 comparation returns [ASTNode node]:
 	arithmic_expression {$node = $arithmic_expression.node;}
