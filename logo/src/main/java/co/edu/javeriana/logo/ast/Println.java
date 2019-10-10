@@ -1,7 +1,5 @@
 package co.edu.javeriana.logo.ast;
 
-import java.util.Map;
-
 import co.edu.javeriana.logo.scope.Context;
 
 public class Println implements ASTNode{

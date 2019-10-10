@@ -4,8 +4,6 @@ import java.util.List;
 
 import co.edu.javeriana.logo.scope.Context;
 
-import co.edu.javeriana.logo.scope.Context;
-
 public class Cicle implements ASTNode{
 	private ASTNode condition;
 	private List<ASTNode> body;
