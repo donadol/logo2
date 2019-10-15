@@ -70,8 +70,9 @@ cicle returns [ASTNode node ]: INI_WHILE expression DO
 						$node = new Cicle($expression.node,body);
 						
 					}END_WHILE;
-function: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
-execute: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
+function_def: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
+
+function_call: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
 
 move_forw returns [ASTNode node]: MOVE_FORW expression {
 	$node = new MoveForw($expression.node, turtle);
