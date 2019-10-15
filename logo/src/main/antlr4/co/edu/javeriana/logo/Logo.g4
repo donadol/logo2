@@ -39,7 +39,7 @@ sentence returns [ASTNode node ]:
 				| var_decl {$node = $var_decl.node;}
 				| var_assign {$node = $var_assign.node;}
 				| println {$node = $println.node;}
-				| read
+				| read {$node = $read.node;}
 				| conditional{$node = $conditional.node;}
 				| cicle {$node = $cicle.node;};
 
@@ -103,10 +103,12 @@ var_assign returns  [ASTNode node ]: ID ASSIGN expression{
 };
 
 println returns [ASTNode node ]: PRINTLN expression
-
-	{$node = new Println($expression.node);};
-read: READ expression
-	{};
+	{$node = new Println($expression.node);
+};
+	
+read returns [ASTNode node]: READ ID
+	{$node = new Read($ID.text);
+};
 
 expression returns [ASTNode node]:
 	arithmic_expression {$node = $arithmic_expression.node;}

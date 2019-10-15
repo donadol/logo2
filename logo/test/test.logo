@@ -8,3 +8,6 @@ end_while
 
 println b
 println y
+
+read b
+println b
