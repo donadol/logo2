@@ -27,9 +27,9 @@ public class Function_Call implements ASTNode {
 		
 		for(ASTNode n:func.getBody()) {
 			Object task = n.execute(local_context);
-			if(task!=null) {
-				return task;
-			};
+			if(task instanceof Retornado) {
+				return ((Retornado)task).getValue();
+			}
 		}
 		return null;
 	}

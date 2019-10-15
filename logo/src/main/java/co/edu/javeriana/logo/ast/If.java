@@ -23,14 +23,16 @@ public class If implements ASTNode{
 		if((boolean) condition.execute(symbolTable)){
 			for(ASTNode n: body ){
 				Object task = n.execute(local_context);
-				if(task != null)
+				if(task instanceof Retornado) {
 					return task;
+				}
 			}
 		}else{
 			for(ASTNode n: elsebody ){
 				Object task = n.execute(local_context);
-				if(task != null)
+				if(task instanceof Retornado) {
 					return task;
+				}
 			}			
 		}
 		return null;

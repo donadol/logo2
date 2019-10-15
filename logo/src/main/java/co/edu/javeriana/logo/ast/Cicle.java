@@ -19,7 +19,10 @@ public class Cicle implements ASTNode{
 		Context local_context = new Context(symbolTable);
 		while((boolean) condition.execute(symbolTable)){
 			for(ASTNode n: body ){
-				n.execute(local_context);
+				Object task = n.execute(local_context);
+				if(task instanceof Retornado) {
+					return task;
+				}
 				if(!(boolean) condition.execute(local_context))
 					return null;
 			}

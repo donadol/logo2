@@ -41,7 +41,10 @@ sentence returns [ASTNode node ]:
 				| println {$node = $println.node;}
 				| read {$node = $read.node;}
 				| conditional{$node = $conditional.node;}
-				| cicle {$node = $cicle.node;};
+				| cicle {$node = $cicle.node;}
+				| function_def {$node = $function_def.node;}
+				| function_call {$node = $function_call.node;}
+				| return_val {$node = $return_val.node;};
 
 conditional returns [ASTNode node ]: INI_IF expression THEN
 					{
@@ -59,8 +62,7 @@ conditional returns [ASTNode node ]: INI_IF expression THEN
 						$node = new If($expression.node,body,elsebody);
 					}
 				END_IF;
-				
-				
+					
 cicle returns [ASTNode node ]: INI_WHILE expression DO 
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();	
@@ -74,14 +76,13 @@ cicle returns [ASTNode node ]: INI_WHILE expression DO
 function_def returns [ASTNode node ]: INI_FUNC nombre = ID PAR_OPEN
 
 					{
-						List<ASTNode> parametros = new ArrayList<ASTNode>();	
+						List<String> parametros = new ArrayList<String>();	
 					}
 					(par1 = ID {parametros.add($par1.text);}
-						( COLON parN =  ID {parametros.add($parN.text);})*
+						( COMMA parN =  ID {parametros.add($parN.text);})*
 					)?
 					
-					
-					PAR_CLOSE TWO_DOTS
+					PAR_CLOSE COLON
 
 					{
 						List<ASTNode> body = new ArrayList<ASTNode>();	
@@ -90,11 +91,8 @@ function_def returns [ASTNode node ]: INI_FUNC nombre = ID PAR_OPEN
 					(f1 = sentence {body.add($f1.node);})+ 
 					
 					{
-						$node = new Function_Def($nombre.text , parametros,body);
+						$node = new Function_Def($nombre.text, parametros, body);
 					}
-			
-			
-			
 			END_FUNC;
 
 function_call returns [ASTNode node]: nombre = ID PAR_OPEN 
@@ -103,7 +101,7 @@ function_call returns [ASTNode node]: nombre = ID PAR_OPEN
 						List<ASTNode> parametros = new ArrayList<ASTNode>();	
 					}
 					(par1 = expression {parametros.add($par1.node);}						
-						(COLON parN = expression  {parametros.add($parN.node);})*
+						(COMMA parN = expression  {parametros.add($parN.node);})*
 					)?
 
 					{
@@ -111,6 +109,10 @@ function_call returns [ASTNode node]: nombre = ID PAR_OPEN
 					}
 
  					PAR_CLOSE;
+
+return_val returns[ASTNode node]: 
+			RETURN {$node = new Return();}
+			| RETURN expression {$node = new Return($expression.node);};
 
 move_forw returns [ASTNode node]: MOVE_FORW expression {
 	$node = new MoveForw($expression.node, turtle);
@@ -128,7 +130,7 @@ rot_r returns [ASTNode node]: ROT_R expression {
 	$node = new RotR($expression.node, turtle);
 };
 
-set_color returns [ASTNode node]: SET_COLOR c1=expression COLON c2=expression COLON c3=expression COLON c4=expression{
+set_color returns [ASTNode node]: SET_COLOR c1=expression COMMA c2=expression COMMA c3=expression COMMA c4=expression{
 	$node = new setColor($c1.node,$c2.node,$c3.node,$c4.node, turtle);
 };
 
@@ -195,6 +197,7 @@ term returns [ASTNode node]:
 LET: 'let';
 PRINTLN: 'println';
 READ: 'read';
+RETURN: 'return';
 
 MOVE_FORW: 'move_forw';
 MOVE_BACK: 'move_back';
@@ -238,9 +241,9 @@ BRACKET_CLOSE: '}';
 PAR_OPEN: '(';
 PAR_CLOSE: ')';
 
-COLON: ',';
+COMMA: ',';
 SEMICOLON: ';';
-TWO_DOTS: ':';
+COLON: ':';
 
 NUMBER: [0-9]+('.'[0-9]+)?;
 BOOLEAN: 'true'|'false';
