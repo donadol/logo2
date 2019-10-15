@@ -70,9 +70,47 @@ cicle returns [ASTNode node ]: INI_WHILE expression DO
 						$node = new Cicle($expression.node,body);
 						
 					}END_WHILE;
-function_def: INI_FUNC ID PAR_OPEN (ID (COLON ID)*)? PAR_CLOSE TWO_DOTS sentence+ END_FUNC;
+					
+function_def returns [ASTNode node ]: INI_FUNC nombre = ID PAR_OPEN
 
-function_call: ID PAR_OPEN ((expression) (COLON (expression)*))* PAR_CLOSE;
+					{
+						List<ASTNode> parametros = new ArrayList<ASTNode>();	
+					}
+					(par1 = ID {parametros.add($par1.text);}
+						( COLON parN =  ID {parametros.add($parN.text);})*
+					)?
+					
+					
+					PAR_CLOSE TWO_DOTS
+
+					{
+						List<ASTNode> body = new ArrayList<ASTNode>();	
+					}
+
+					(f1 = sentence {body.add($f1.node);})+ 
+					
+					{
+						$node = new Function_Def($nombre.text , parametros,body);
+					}
+			
+			
+			
+			END_FUNC;
+
+function_call returns [ASTNode node]: nombre = ID PAR_OPEN 
+
+					{
+						List<ASTNode> parametros = new ArrayList<ASTNode>();	
+					}
+					(par1 = expression {parametros.add($par1.node);}						
+						(COLON parN = expression  {parametros.add($parN.node);})*
+					)?
+
+					{
+						$node = new Function_Call($nombre.text, parametros);
+					}
+
+ 					PAR_CLOSE;
 
 move_forw returns [ASTNode node]: MOVE_FORW expression {
 	$node = new MoveForw($expression.node, turtle);
