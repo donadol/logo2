@@ -27,9 +27,9 @@ program:{
 		(sentence {body.add($sentence.node);})*
 		{
 			for(ASTNode n : body){
+				n.execute(symbolTable);
 				if(n instanceof Return)
 					break;
-				n.execute(symbolTable);
 			}
 		};
 sentence returns [ASTNode node ]: 
