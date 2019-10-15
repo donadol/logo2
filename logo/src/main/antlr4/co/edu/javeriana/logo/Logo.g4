@@ -27,6 +27,8 @@ program:{
 		(sentence {body.add($sentence.node);})*
 		{
 			for(ASTNode n : body){
+				if(n instanceof Return)
+					break;
 				n.execute(symbolTable);
 			}
 		};
@@ -153,8 +155,7 @@ read returns [ASTNode node]: READ ID
 expression returns [ASTNode node]:
 	arithmic_expression {$node = $arithmic_expression.node;}
 	| boolean_expression {$node = $boolean_expression.node;}
-	//| function {$node = $function.node;}
-	;
+	| function_call {$node = $function_call.node;};
 	
 arithmic_expression returns [ASTNode node]:
 	factor {$node = $factor.node;}

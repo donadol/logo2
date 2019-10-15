@@ -12,6 +12,7 @@ def makeHorizontalLine():
 	rot_l 180
 	set_color 0,0,0,0 
 	move_forw 50
+	return 
 end_def
 
 let a = 0
@@ -26,10 +27,13 @@ end_if
 move_forw(300)
 rot_l(90)
 move_forw(50)
-makeHorizontalLine() 
+rot_r(90)
+println makeHorizontalLine() 
 set_color 255,255,255,255 
 rot_r 90
 move_forw 200
+println "retornando"
+return
 moveRotate(45,50)
 moveRotate(45,50)
 moveRotate(45,50)
